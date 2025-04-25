@@ -25,10 +25,13 @@ pub const CHARTER : char = 'a';
 pub const INTEGER_FROM_CHAR: char = char::from_u32(1).unwrap();
 
 // Aggregate types
-pub const INTEGER_ARRAY : [i32; 3] = [0;3];
+// Arrays
+pub const INTEGER_ARRAY: [i32; 3] = [0; 3];
 pub const BOOLEAN_ARRAY : [bool; 2] = [true, false];
-
 pub const FLOAT_ARRAY : [f32; 3] = [0f32;3];
+
+// Tuples
+pub const TUPLE: (char, i32, &str) = ('A', 1, "good");
 
 pub struct TextMatch(usize, String);
 
@@ -66,6 +69,13 @@ pub struct DisplayPropsGoodVar {
     pub color: Color
 }
 
+// Ubiquitous enum Types
+pub const OPTION: Option<u32> = Some(2);
+pub const ABSENT_OPTION: Option<i8> = None;
+
+pub const RESULT: Result<i32, &str> = Ok(-3);
+pub const ERROR_RESULT: Result<i32, &str> = Err("Some error message");
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,7 +99,13 @@ mod tests {
         let m = TextMatch(12, "needle".to_owned());
         assert_eq!(m.0, 12);
     }
-
+    
+    #[test]
+    fn check_tuple_values_access(){
+        assert_eq!(TUPLE.0, 'A');
+        assert_eq!(TUPLE.1, 1i32);
+        assert_eq!(TUPLE.2, "good");
+    }
     #[test]
     fn enum_as_integer(){
         let status_code = HttpResultCode::NotFound;
@@ -107,5 +123,27 @@ mod tests {
         assert_eq!(msg, "ok");
     }
 
+    #[test]
+    fn option_has_some(){
+        assert_eq!(OPTION.is_some(), true);
+        assert_ne!(OPTION.is_none(), true);
+    }
 
+    #[test]
+    fn absent_option(){
+        assert_eq!(ABSENT_OPTION.is_none(), true);
+        assert_ne!(ABSENT_OPTION.is_some(), true);
+    }
+
+    #[test]
+    fn result_is_ok(){
+        assert_eq!(RESULT.is_ok(), true);
+        assert_ne!(RESULT.is_err(), true);
+    }
+
+    #[test]
+    fn result_is_error(){
+        assert_eq!(ERROR_RESULT.is_err(), true);
+        assert_ne!(ERROR_RESULT.is_ok(), true);
+    }
 }
