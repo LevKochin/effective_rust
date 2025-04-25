@@ -76,6 +76,46 @@ pub const ABSENT_OPTION: Option<i8> = None;
 pub const RESULT: Result<i32, &str> = Ok(-3);
 pub const ERROR_RESULT: Result<i32, &str> = Err("Some error message");
 
+// Functions
+// Return 'x' divided by 'y'
+pub fn div(x: f64, y: f64) -> f64{
+    if y == 0.0 {
+        // Terminate function and return a value
+        return f64::NAN;
+    }
+
+    // The last expression in the function body is implicitly returned.
+    x / y
+}
+
+// Function called just for its side effects, with no return value
+// Can also write the return value as '-> ()'.
+pub fn show(x: f64) {
+    println!("x = {x}");
+}
+
+// Methods
+pub enum Shape {
+    Rectangle {width: f64, height: f64},
+    Circle {radius: f64}
+}
+
+impl Shape {
+    pub fn area(&self) -> f64 {
+        match self {
+            Shape::Rectangle {width, height} => width * height,
+            Shape::Circle {radius} => std::f64::consts::PI * radius * radius
+        }
+    }
+}
+
+// Function pointer
+fn sum (x: i32, y: i32) -> i32 {
+    x + y
+}
+
+pub const OP: fn(i32,i32) -> i32 = sum;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -145,5 +185,12 @@ mod tests {
     fn result_is_error(){
         assert_eq!(ERROR_RESULT.is_err(), true);
         assert_ne!(ERROR_RESULT.is_ok(), true);
+    }
+
+    #[test]
+    fn check_function_pointer(){
+        let op = OP;
+        let op1 = OP;
+        assert_eq!(op, op1);
     }
 }
