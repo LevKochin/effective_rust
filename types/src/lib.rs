@@ -141,6 +141,24 @@ impl<'a> InternalContext<'a>{
     }
 }
 
+// Static
+pub const STATIC_STR : &'static str = "Das string";
+
+pub fn modify_all2<F>(data : &mut  [u32], mut mutator: F)
+where F: FnMut(u32) -> u32,
+{
+    for value in data {
+        *value = mutator(*value);
+    }
+}
+
+// Traits
+
+pub trait Sort {
+    fn sort(&mut self);
+}
+
+pub trait StableSort: Sort{}
 
 #[cfg(test)]
 mod tests {
@@ -226,7 +244,7 @@ mod tests {
         modify_all(&mut data, add2);
         assert_eq!(data, vec![3, 4, 5]);
     }
-    
+
     #[test]
     fn check_closures(){
         let amount_to_add = 3;
@@ -236,7 +254,7 @@ mod tests {
         let z = add_n(5);
         assert_eq!(z, 8);
     }
-    
+
     #[test]
     fn check_internal_context(){
         let amount_to_add = 3;
