@@ -116,6 +116,32 @@ fn sum (x: i32, y: i32) -> i32 {
 
 pub const OP: fn(i32,i32) -> i32 = sum;
 
+// Closures
+
+pub fn modify_all(data: &mut [u32], mutator: fn(u32) -> u32){
+    for value in data {
+        *value = mutator(*value);
+    }
+}
+
+pub fn add2(v: u32) -> u32 {
+    v + 2
+}
+
+// *Rough* equivalent to a capturing closure
+struct InternalContext<'a> {
+    // reference to captured variables
+    amount_to_add: &'a u32
+}
+
+impl<'a> InternalContext<'a>{
+    fn internal_op(&self, y: u32) -> u32 {
+        // body of the lambda expression
+        y + *self.amount_to_add
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -192,5 +218,32 @@ mod tests {
         let op = OP;
         let op1 = OP;
         assert_eq!(op, op1);
+    }
+
+    #[test]
+    fn check_method_as_argument() {
+        let mut data = vec![1, 2, 3];
+        modify_all(&mut data, add2);
+        assert_eq!(data, vec![3, 4, 5]);
+    }
+    
+    #[test]
+    fn check_closures(){
+        let amount_to_add = 3;
+        let add_n = |y: u32| {
+            y + amount_to_add
+        };
+        let z = add_n(5);
+        assert_eq!(z, 8);
+    }
+    
+    #[test]
+    fn check_internal_context(){
+        let amount_to_add = 3;
+        let add_n = InternalContext {
+            amount_to_add: &amount_to_add
+        };
+        let z = add_n.internal_op(5);
+        assert_eq!(z, 8);
     }
 }
